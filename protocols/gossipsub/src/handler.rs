@@ -497,6 +497,18 @@ impl ConnectionHandler for Handler {
                 }
 
                 if event.is_outbound() {
+                    match event {
+                        ConnectionEvent::DialUpgradeError(ref err) => {
+                            tracing::error!("Dial upgrade error: {:?}", err);
+                        }
+                        ConnectionEvent::FullyNegotiatedOutbound(ref out) => {
+                            tracing::info!("Fully negotiated outbound: {:?}", out.info);
+                        }
+                        _ => {
+                            tracing::error!("Unexpected connection event");
+                        }
+                    }
+
                     handler.outbound_substream_establishing = false;
 
                     handler.outbound_substream_attempts += 1;
