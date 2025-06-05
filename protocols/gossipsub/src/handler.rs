@@ -79,7 +79,7 @@ pub enum HandlerIn {
 /// attempt to recreate these. This imposes an upper bound of new substreams before we consider the
 /// connection faulty and disable the handler. This also prevents against potential substream
 /// creation loops.
-const MAX_SUBSTREAM_ATTEMPTS: usize = 5;
+const MAX_SUBSTREAM_ATTEMPTS: usize = 256;
 
 #[allow(clippy::large_enum_variant)]
 pub enum Handler {
@@ -503,7 +503,11 @@ impl ConnectionHandler for Handler {
                         }
                         ConnectionEvent::FullyNegotiatedOutbound(ref out) => {
                             let (_, out_kind) = &out.protocol;
-                            tracing::info!("Fully negotiated outbound out kind: {:?}", out_kind);
+                            tracing::info!(
+                                outbound_attempts = handler.outbound_substream_attempts,
+                                "Fully negotiated outbound out kind: {:?}",
+                                out_kind
+                            );
                         }
                         _ => {
                             tracing::error!("Unexpected connection event");
