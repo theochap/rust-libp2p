@@ -502,7 +502,8 @@ impl ConnectionHandler for Handler {
                             tracing::error!("Dial upgrade error: {:?}", err);
                         }
                         ConnectionEvent::FullyNegotiatedOutbound(ref out) => {
-                            tracing::info!("Fully negotiated outbound: {:?}", out.info);
+                            let (_, out_kind) = &out.protocol;
+                            tracing::info!("Fully negotiated outbound out kind: {:?}", out_kind);
                         }
                         _ => {
                             tracing::error!("Unexpected connection event");
